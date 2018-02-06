@@ -22,11 +22,3 @@
 #endif
 
 #include "p_shell.h"
-
-int
-shell_interactive(void)
-{
-	/* Interactive mode is not supported */
-	shell_usage();
-	return 1;
-}

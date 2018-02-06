@@ -27,16 +27,24 @@
 
 # include <spawn.h>
 # include <sys/wait.h>
+# include <sys/stat.h>
 
 /* The name of the command used to invoke this shell */
 # ifndef SHELLNAME
 #  define SHELLNAME                    "talisker"
 # endif
 
+/* Available only to the wrapper */
+extern const char *shell_progname;
 extern char **environ;
 
-extern void shell_usage(void);
-extern int shell_spawn(const char *name, int argc, char **argv, char **envp);
+void shell_usage(void);
+int shell_progname_parse(int *argc, char **argv);
+int shell_spawn(const char *name, int argc, char **argv, char **envp);
+int shell_wrapper_exec(int argc, char **argv, char **envp);
+
+/* Available to the rest of the shell */
+int shell_interactive(void);
+int shell_script_exec(int argc, char **argv, char **envp);
 
 #endif /*!P_SHELL_H_*/
-

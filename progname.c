@@ -23,10 +23,39 @@
 
 #include "p_shell.h"
 
+const char *shell_progname = SHELLNAME;
+
+/* Tidy up the shell's @argv[0], modifying it if necessary, and setting
+ * shell_progname as a side-effect to match the (possibly-updated) @argv[0]/
+ */
+
 int
-shell_interactive(void)
+shell_progname_parse(int *argc, char **argv)
 {
-	/* Interactive mode is not supported */
-	shell_usage();
-	return 1;
+	char *t, *p;
+	
+	if(*argc < 1)
+	{
+		return -1;
+	}
+	shell_progname = argv[0];
+	do
+	{
+		t = strchr(shell_progname, '/');
+		if(t)
+		{
+			/* Strip trailing slashes */
+			for(p = t; *p == '/'; p++) { }
+			if(!*p)
+			{
+				*p = 0;
+				break;
+			}
+			/* Otherwise... */
+			shell_progname = p;
+		}
+	}
+	while(t);
+	argv[0] = (char *) shell_progname;
+	return 0;
 }

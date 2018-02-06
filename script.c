@@ -23,10 +23,32 @@
 
 #include "p_shell.h"
 
+/* In future this will change, so we are reserving the behaviour
+ * in the event of a pathname being given: if the first argument
+ * is a string containing multiple path components then it is
+ * assumed that it is the pathname of a script intended
+ * to be executed.
+ *
+ * At present we simply return a `EPERM` (Operation not permitted)
+ * failure status.
+ */
 int
-shell_interactive(void)
+shell_script_exec(int argc, char **argv, char **envp)
 {
-	/* Interactive mode is not supported */
-	shell_usage();
-	return 1;
+	struct stat sbuf;
+	
+	(void) envp;
+	
+	if(argc < 2)
+	{
+		return 125;
+	}
+	errno = 0;
+	stat(argv[1], &sbuf);
+	if(!errno)
+	{
+		errno = EPERM;
+	}		
+	fprintf(stderr, "%s: %s: %s\n", shell_progname, argv[1], strerror(errno));
+	return 125;
 }

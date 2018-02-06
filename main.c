@@ -43,37 +43,14 @@
 int
 main(int argc, char **argv)
 {
-	const char *operand;
-	char namebuf[128], argbuf[128];
-	size_t l;
-	int r;
-	
+	shell_progname_parse(&argc, argv);
 	if(argc < 2)
 	{
-		shell_usage();
-		exit(0);
+		return shell_interactive();
 	}
-	operand = argv[1];
-	l = strlen(SHELLNAME);
-	if(l + strlen(operand) + 1 >= sizeof(namebuf))
+	if(strchr(argv[1], '/'))
 	{
-		r = 127;
+		return shell_script_exec(argc, argv, environ);
 	}
-	else
-	{
-		strcpy(namebuf, SHELLNAME);
-		namebuf[l] = '-';
-		strcpy(&(namebuf[l + 1]), operand);
-		strcpy(argbuf, namebuf);
-		argbuf[l] = ' ';
-		argv++;
-		argc--;
-		argv[0] = argbuf;
-		r = shell_spawn(namebuf, argc, argv, environ);
-	}
-	if(r == 127)
-	{
-		fprintf(stderr, "No such command '%s %s'\n", SHELLNAME, operand);
-	}
-	return r;
+	return shell_wrapper_exec(argc, argv, environ);
 }
