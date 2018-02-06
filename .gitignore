@@ -32,5 +32,3 @@ Makefile.in
 /libtool
 /DockerBuild
 /filelist.*
-/talisker
-/wrapper

@@ -20,21 +20,35 @@
 #ifndef P_SHELL_H_
 # define P_SHELL_H_                    1
 
+/* We primarily target UNIX08 systems */
+# define _POSIX_C_SOURCE               200809L
+
+# if !defined(SHELL_MAX_PORTABILITY) && defined(__linux__)
+/* On Linux, request visibility of extended, but non-portable APIs */
+#  define _GNU_SOURCE                  1
+# endif
+# if !defined(SHELL_MAX_PORTABILITY) && defined(__APPLE__)
+/* On Darwin (macOS, iOS, tvOS, etc.), request visibility of NP APIs */
+#  define _DARWIN_C_SOURCE             1
+# endif
+
 # include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
 # include <errno.h>
 
 # include <spawn.h>
+
 # include <sys/wait.h>
 # include <sys/stat.h>
 
-/* The name of the command used to invoke this shell */
+/* The fallback name of the command used to invoke this shell */
 # ifndef SHELLNAME
 #  define SHELLNAME                    "talisker"
 # endif
 
 typedef struct shell_context_struct SHELL;
+typedef struct shell_command_struct SHELLCMD;
 
 struct shell_context_struct
 {
@@ -42,6 +56,16 @@ struct shell_context_struct
 	char **argv;
 	char **envp;
 	const char *progname;
+};
+
+struct shell_command_struct
+{
+	SHELL *shell;
+	const char *cmdline;
+	char *pathname;
+	int argc;
+	char **argv;
+	char **envp;
 };
 
 /* Available only to the wrapper */

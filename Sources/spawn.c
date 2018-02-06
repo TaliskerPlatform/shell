@@ -77,13 +77,15 @@ shell_spawn(SHELL *shell, const char *name, int argc, char **argv, char **envp)
 		if(WIFSIGNALED(childstat))
 		{
 			fprintf(stderr, "%s: %s", argv[0], strsignal(WTERMSIG(childstat)));
+#ifdef WCOREDUMP
 			if(WCOREDUMP(childstat))
 			{
-				fprintf(stderr, "; core dumped.\n");
+				fprintf(stderr, " (core dumped).\n");
 			}
 			else
+#endif
 			{
-				fprintf(stderr, "\n");
+				fprintf(stderr, ".\n");
 			}
 			return 124;
 		}
