@@ -23,14 +23,12 @@
 
 #include "p_shell.h"
 
-const char *shell_progname = SHELLNAME;
-
 /* Tidy up the shell's @argv[0], modifying it if necessary, and setting
  * shell_progname as a side-effect to match the (possibly-updated) @argv[0]/
  */
 
 int
-shell_progname_parse(int *argc, char **argv)
+shell_progname_parse(SHELL *shell, int *argc, char **argv)
 {
 	char *t, *p;
 	
@@ -38,10 +36,10 @@ shell_progname_parse(int *argc, char **argv)
 	{
 		return -1;
 	}
-	shell_progname = argv[0];
+	shell->progname = argv[0];
 	do
 	{
-		t = strchr(shell_progname, '/');
+		t = strchr(shell->progname, '/');
 		if(t)
 		{
 			/* Strip trailing slashes */
@@ -52,10 +50,10 @@ shell_progname_parse(int *argc, char **argv)
 				break;
 			}
 			/* Otherwise... */
-			shell_progname = p;
+			shell->progname = p;
 		}
 	}
 	while(t);
-	argv[0] = (char *) shell_progname;
+	argv[0] = (char *) shell->progname;
 	return 0;
 }

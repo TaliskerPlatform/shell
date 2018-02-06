@@ -33,7 +33,7 @@
  * failure status.
  */
 int
-shell_script_exec(int argc, char **argv, char **envp)
+shell_script_exec(SHELL *shell, int argc, char **argv, char **envp)
 {
 	struct stat sbuf;
 	
@@ -49,6 +49,6 @@ shell_script_exec(int argc, char **argv, char **envp)
 	{
 		errno = EPERM;
 	}		
-	fprintf(stderr, "%s: %s: %s\n", shell_progname, argv[1], strerror(errno));
+	fprintf(stderr, "%s: %s: %s\n", shell->progname, argv[1], strerror(errno));
 	return 125;
 }

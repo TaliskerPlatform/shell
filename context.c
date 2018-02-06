@@ -23,3 +23,13 @@
 
 #include "p_shell.h"
 
+int
+shell_context_init(SHELL *shell, int argc, char **argv, char **envp)
+{
+	memset(shell, 0, sizeof(SHELL));
+	shell->progname = SHELLNAME;
+	shell->argc = argc;
+	shell->argv = argv;
+	shell->envp = envp;
+	return 0;
+}

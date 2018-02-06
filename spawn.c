@@ -44,7 +44,7 @@
  */
 
 int
-shell_spawn(const char *name, int argc, char **argv, char **envp)
+shell_spawn(SHELL *shell, const char *name, int argc, char **argv, char **envp)
 {
 	pid_t pid;
 	int childstat, r;
@@ -71,7 +71,7 @@ shell_spawn(const char *name, int argc, char **argv, char **envp)
 		}
 		if(r == -1)
 		{
-			fprintf(stderr, "%s: waitpid: %s\n", shell_progname, strerror(errno));
+			fprintf(stderr, "%s: waitpid: %s\n", shell->progname, strerror(errno));
 			return 125;
 		}
 		if(WIFSIGNALED(childstat))

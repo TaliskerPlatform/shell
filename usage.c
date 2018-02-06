@@ -24,7 +24,7 @@
 #include "p_shell.h"
 
 void
-shell_usage(void)
+shell_usage(SHELL *shell)
 {
-	fprintf(stderr, "Usage: %s COMMAND\n", SHELLNAME);
+	fprintf(stderr, "Usage: %s COMMAND\n", shell->progname);
 }

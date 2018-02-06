@@ -24,9 +24,9 @@
 #include "p_shell.h"
 
 int
-shell_interactive(void)
+shell_interactive(SHELL *shell)
 {
 	/* Interactive mode is not supported */
-	shell_usage();
+	shell_usage(shell);
 	return 1;
 }

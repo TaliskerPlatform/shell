@@ -33,3 +33,4 @@ Makefile.in
 /DockerBuild
 /filelist.*
 /talisker
+/wrapper

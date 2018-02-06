@@ -34,17 +34,31 @@
 #  define SHELLNAME                    "talisker"
 # endif
 
+typedef struct shell_context_struct SHELL;
+
+struct shell_context_struct
+{
+	int argc;
+	char **argv;
+	char **envp;
+	const char *progname;
+};
+
 /* Available only to the wrapper */
-extern const char *shell_progname;
 extern char **environ;
 
-void shell_usage(void);
-int shell_progname_parse(int *argc, char **argv);
-int shell_spawn(const char *name, int argc, char **argv, char **envp);
-int shell_wrapper_exec(int argc, char **argv, char **envp);
+int shell_context_init(SHELL *context, int argc, char **argv, char **envp);
+int shell_context_done(SHELL *context);
 
+void shell_usage(SHELL *context);
+int shell_progname_parse(SHELL *context, int *argc, char **argv);
+int shell_spawn(SHELL *context, const char *name, int argc, char **argv, char **envp);
+int shell_wrapper_exec(SHELL *context, int argc, char **argv, char **envp);
+
+# ifndef SHELL_WRAPPER
 /* Available to the rest of the shell */
-int shell_interactive(void);
-int shell_script_exec(int argc, char **argv, char **envp);
+int shell_interactive(SHELL *context);
+int shell_script_exec(SHELL *context, int argc, char **argv, char **envp);
+# endif
 
 #endif /*!P_SHELL_H_*/

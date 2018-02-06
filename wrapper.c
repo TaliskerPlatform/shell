@@ -53,7 +53,7 @@
  */
 
 int
-shell_wrapper_exec(int argc, char **argv, char **envp)
+shell_wrapper_exec(SHELL *shell, int argc, char **argv, char **envp)
 {
 	const char *operand;
 	char namebuf[128], argbuf[128];
@@ -65,12 +65,12 @@ shell_wrapper_exec(int argc, char **argv, char **envp)
 		return 127;
 	}
 	operand = argv[1];
-	l = strlen(shell_progname);
+	l = strlen(shell->progname);
 	if(l + strlen(operand) + 1 >= sizeof(namebuf))
 	{
 		return 127;
 	}
-	strcpy(argbuf, shell_progname);
+	strcpy(argbuf, shell->progname);
 	argbuf[l] = ' ';
 	strcpy(&(argbuf[l + 1]), operand);
 
@@ -85,10 +85,10 @@ shell_wrapper_exec(int argc, char **argv, char **envp)
 	argv++;
 	argc--;
 	argv[0] = argbuf;
-	r = shell_spawn(namebuf, argc, argv, envp);
+	r = shell_spawn(shell, namebuf, argc, argv, envp);
 	if(r == 127)
 	{
-		fprintf(stderr, "%s: %s: command not found\n", shell_progname, operand);
+		fprintf(stderr, "%s: %s: command not found\n", shell->progname, operand);
 	}
 	return r;
 }

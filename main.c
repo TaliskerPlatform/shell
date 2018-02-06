@@ -43,14 +43,31 @@
 int
 main(int argc, char **argv)
 {
-	shell_progname_parse(&argc, argv);
+	SHELL shell;
+	
+	if(shell_context_init(&shell, argc, argv, environ))
+	{
+		fprintf(stderr, "%s: shell initialisation failed: %s\n", argv[0], strerror(errno));
+		return 125;
+	}
+	shell_progname_parse(&shell, &argc, argv);
 	if(argc < 2)
 	{
-		return shell_interactive();
+#if SHELL_WRAPPER
+		shell_usage(&shell);
+		return 125;
+#else
+		return shell_interactive(&shell);
+#endif
 	}
 	if(strchr(argv[1], '/'))
 	{
-		return shell_script_exec(argc, argv, environ);
+#if SHELL_WRAPPER
+		shell_usage(&shell);
+		return 125;
+#else
+		return shell_script_exec(&shell, argc, argv, environ);
+#endif
 	}
-	return shell_wrapper_exec(argc, argv, environ);
+	return shell_wrapper_exec(&shell, argc, argv, environ);
 }
