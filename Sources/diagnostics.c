@@ -76,26 +76,85 @@ const struct shell_diag_struct shell_messages[] = {
 };
 
 static const struct shell_diag_struct *shell_diag_locate_(SHELLDIAG diag);
+static void shell_diag_printf_internal_(SHELL *shell, SHELLSEVERITY severity, const struct shell_diag_struct *diag, SHELLDIAG code, const char *fmt, ...);
+static void shell_diag_vprintf_internal_(SHELL *shell, SHELLSEVERITY severity, const struct shell_diag_struct *diag, SHELLDIAG code, const char *fmt, va_list ap);
 
-int
+/* Print a diagnostic message followed by a custom string */
+void
+shell_diag_vprintf(SHELL *shell, SHELLSEVERITY severity, SHELLDIAG code, const char *fmt, va_list ap)
+{
+	const struct shell_diag_struct *diag;
+	
+	diag = shell_diag_locate_(code);
+	shell_diag_vprintf_internal_(shell, severity, diag, code, fmt, ap);
+}
+
+void
+shell_diag_printf(SHELL *shell, SHELLSEVERITY severity, SHELLDIAG code, const char *fmt, ...)
+{
+	va_list ap;
+	const struct shell_diag_struct *diag;
+	
+	diag = shell_diag_locate_(code);
+	va_start(ap, fmt);
+	shell_diag_vprintf_internal_(shell, severity, diag, code, fmt, ap);
+	va_end(ap);
+}
+
+/* Display a diagnostic message */
+void
 shell_diag(SHELL *shell, SHELLSEVERITY severity, SHELLDIAG code)
 {
 	const struct shell_diag_struct *diag;
 	const char *reasonstr;
-	char severitylevel[] = { '!', '*', 'C', 'E', 'W', 'N', 'I', 'D'};
-	char ch;
-	
-	(void) shell;
 	
 	diag = shell_diag_locate_(code);
-	if(shell && shell->diag_reason)
+	if(diag && diag->message)
 	{
-		reasonstr = strerror(shell->diag_reason);
+		shell_diag_printf_internal_(shell, severity, diag, code, "%s", diag->message);
 	}
 	else
 	{
-		reasonstr = NULL;
+		shell_diag_printf_internal_(shell, severity, diag, code, "Unknown diagnostic #%04d", code);
 	}
+	if(shell && shell->diag_reason)
+	{
+		reasonstr = strerror(shell->diag_reason);
+		fprintf(stderr, " (reason code #%d", shell->diag_reason);
+		if(reasonstr)
+		{
+			fprintf(stderr, ": %s", reasonstr);
+		}
+		fputc(')', stderr);
+	}
+	if(shell && shell->diag_signal)
+	{
+		fprintf(stderr, " (%s)", strsignal(shell->diag_signal));
+	}
+	if(shell && shell->diag_exitstatus)
+	{
+		fprintf(stderr, " (exited with status %d)", shell->diag_exitstatus);
+	}
+	fputc('\n', stderr);
+}
+
+static void
+shell_diag_printf_internal_(SHELL *shell, SHELLSEVERITY severity, const struct shell_diag_struct *diag, SHELLDIAG code, const char *fmt, ...)
+{
+	va_list ap;
+	
+	va_start(ap, fmt);
+	shell_diag_vprintf_internal_(shell, severity, diag, code, fmt, ap);
+	va_end(ap);
+}
+
+static void
+shell_diag_vprintf_internal_(SHELL *shell, SHELLSEVERITY severity, const struct shell_diag_struct *diag, SHELLDIAG code, const char *fmt, va_list ap)
+{
+	char severitylevel[] = { '!', '*', 'C', 'E', 'W', 'N', 'I', 'D'};
+	char ch;
+		
+	diag = shell_diag_locate_(code);
 	if((size_t) severity < sizeof(severitylevel))
 	{
 		ch = severitylevel[severity];
@@ -116,33 +175,7 @@ shell_diag(SHELL *shell, SHELLSEVERITY severity, SHELLDIAG code)
 	{
 		fprintf(stderr, "%s: ", shell->diag_target);
 	}
-	if(diag && diag->message)
-	{
-		fprintf(stderr, "%s", diag->message);
-	}
-	else
-	{
-		fprintf(stderr, "Unknown diagnostic #%04d", code);
-	}
-	if(shell && shell->diag_reason)
-	{
-		fprintf(stderr, " (reason code #%d", shell->diag_reason);
-		if(reasonstr)
-		{
-			fprintf(stderr, ": %s", reasonstr);
-		}
-		fputc(')', stderr);
-	}
-	if(shell && shell->diag_signal)
-	{
-		fprintf(stderr, " (%s)", strsignal(shell->diag_signal));
-	}
-	if(shell && shell->diag_exitstatus)
-	{
-		fprintf(stderr, " (exited with status %d)", shell->diag_exitstatus);
-	}
-	fputc('\n', stderr);
-	return 0;
+	vfprintf(stderr, fmt, ap);
 }
 
 static const struct shell_diag_struct *

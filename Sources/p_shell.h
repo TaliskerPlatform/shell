@@ -34,6 +34,7 @@
 
 # include <stdio.h>
 # include <stdlib.h>
+# include <stdarg.h>
 # include <string.h>
 # include <errno.h>
 
@@ -56,6 +57,8 @@ struct shell_context_struct
 	char **argv;
 	char **envp;
 	const char *progname;
+	
+	/* Diagnostics */
 	const char *diag_target;
 	int diag_reason;
 	int diag_signal;
@@ -151,7 +154,9 @@ int shell_progname_parse(SHELL *context, int *argc, char **argv);
 int shell_spawn(SHELL *context, const char *name, int argc, char **argv, char **envp);
 int shell_wrapper_exec(SHELL *context, int argc, char **argv, char **envp);
 
-int shell_diag(SHELL *shell, SHELLSEVERITY severity, SHELLDIAG code);
+void shell_diag_vprintf(SHELL *shell, SHELLSEVERITY severity, SHELLDIAG code, const char *fmt, va_list ap);
+void shell_diag_printf(SHELL *shell, SHELLSEVERITY severity, SHELLDIAG code, const char *fmt, ...);
+void shell_diag(SHELL *shell, SHELLSEVERITY severity, SHELLDIAG code);
 
 # ifndef SHELL_WRAPPER
 /* Available to the rest of the shell */

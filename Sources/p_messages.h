@@ -21,6 +21,7 @@
  * mutiple times.
  */
 DEFDIAG(SHELL, INIT, "initialisation failed"),
+DEFDIAG(SHELL, USAGE, "Usage"),
 DEFDIAG(SHELL, NOTFOUND, "command not found"),
 DEFDIAG(SHELL, NOEXEC, "command cannot be executed"),
 DEFDIAG(SHELL, SCRIPTEXEC, "script cannot be executed"),
