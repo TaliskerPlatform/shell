@@ -56,6 +56,7 @@ AC_SUBST([AM_LDFLAGS])
 AC_CONFIG_FILES([
 Makefile
 Sources/Makefile
+Sources/Wrapper/Makefile
 ])
 
 AC_OUTPUT

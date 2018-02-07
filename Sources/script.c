@@ -48,7 +48,13 @@ shell_script_exec(SHELL *shell, int argc, char **argv, char **envp)
 	if(!errno)
 	{
 		errno = EPERM;
-	}		
-	fprintf(stderr, "%s: %s: %s\n", shell->progname, argv[1], strerror(errno));
+	}
+#ifdef EISDIR
+	if(S_ISDIR(sbuf.st_mode))
+	{
+		errno = EISDIR;
+	}
+#endif
+	SHELL_PERR_CRIT_T(shell, SCRIPTEXEC, argv[1]);
 	return 125;
 }

@@ -51,6 +51,7 @@ shell_spawn(SHELL *shell, const char *name, int argc, char **argv, char **envp)
 	
 	pid = 0;
 	argv[argc] = NULL;
+	SHELL_DIAG_RESET(shell);
 	r = posix_spawnp(&pid, name, NULL, NULL, argv, envp);
 	if(r)
 	{
@@ -58,7 +59,7 @@ shell_spawn(SHELL *shell, const char *name, int argc, char **argv, char **envp)
 		{
 			return 127;
 		}
-		fprintf(stderr, "%s: %s\n", name, strerror(r));
+		SHELL_PERR_CRIT_T(shell, NOEXEC, name);
 		return 126;
 	}
 	for(;;)
@@ -71,30 +72,30 @@ shell_spawn(SHELL *shell, const char *name, int argc, char **argv, char **envp)
 		}
 		if(r == -1)
 		{
-			fprintf(stderr, "%s: waitpid: %s\n", shell->progname, strerror(errno));
+			SHELL_PERR_CRIT_T(shell, CHILDWAIT, argv[0]);
 			return 125;
 		}
 		if(WIFSIGNALED(childstat))
 		{
-			fprintf(stderr, "%s: %s", argv[0], strsignal(WTERMSIG(childstat)));
+			shell->diag_signal = WTERMSIG(childstat);
 #ifdef WCOREDUMP
 			if(WCOREDUMP(childstat))
 			{
-				fprintf(stderr, " (core dumped).\n");
+				SHELL_NOTICE_T(shell, CHILDSIGC, argv[0]);
 			}
 			else
 #endif
 			{
-				fprintf(stderr, ".\n");
+				SHELL_NOTICE_T(shell, CHILDSIG, argv[0]);
 			}
 			return 124;
 		}
 		if(WIFEXITED(childstat))
 		{
+			shell->diag_exitstatus = WEXITSTATUS(childstat);
 			if(WEXITSTATUS(childstat))
 			{
-				/* Only print a diagnostic if the exit status was nonzero */
-				fprintf(stderr, "%s: child terminated with status %d\n", argv[0], WEXITSTATUS(childstat));
+				SHELL_NOTICE_T(shell, CHILDERR, argv[0]);
 			}
 			return WEXITSTATUS(childstat);
 		}

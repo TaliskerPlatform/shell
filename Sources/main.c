@@ -45,9 +45,10 @@ main(int argc, char **argv)
 {
 	SHELL shell;
 	
+	SHELL_DIAG_RESET(&shell);
 	if(shell_context_init(&shell, argc, argv, environ))
 	{
-		fprintf(stderr, "%s: shell initialisation failed: %s\n", argv[0], strerror(errno));
+		SHELL_PERR_CRIT(&shell, INIT);
 		return 125;
 	}
 	shell_progname_parse(&shell, &argc, argv);

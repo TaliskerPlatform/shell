@@ -22,3 +22,140 @@
 #endif
 
 #include "p_shell.h"
+
+/* Diagnostic messages printed by the Talisker Shell follow a particular
+ * format, similar to that used by Compaq OpenVMS and Cisco IOS:
+ *
+ * %FACILITY-SEVERITY-MNEMONIC: MESSAGE
+ *
+ * Some messages will include a reason code, which is appended to the message:
+ *
+ * %FACILITY-SEVERITY-MNEMONIC: MESSAGE (reason code #CODE: REASON)
+ *
+ * Occasionally, a description of a reason code will not be available on your
+ * platform:
+ *
+ * %FACILITY-SEVERITY-MNEMONIC: MESSAGE (reason code #CODE)
+ *
+ * The FACILITY is the name of the application producing the diagnostic, in
+ * this case SHELL.
+ *
+ * SEVERITY levels are denoted by a single letter abbreviation:
+ *
+ *     D = Debug             (least severe)
+ *     I = Info
+ *     N = Notice
+ *     W = Warning
+ *     E = Error
+ *     C = Critical error    (most severe)
+ *
+ * The same message may be emitted at different severity levels, depending upon
+ * the context: for example, a missing file may be an _Error_ in some
+ * situations, but a _Critical error_ in others.
+ *
+ * The MNEMONICs are the same across all platforms; the reason codes are
+ * platform-specific: reason code 47 on Linux may not correspond to reason code
+ * 47 on macOS, for example.
+ *
+ */
+
+struct shell_diag_struct
+{
+	SHELLDIAG code;
+	const char *facility;
+	const char *mnemonic;
+	const char *message;
+};
+
+const struct shell_diag_struct shell_messages[] = {
+#undef DEFDIAG
+#define DEFDIAG(facility, mnemonic, message) \
+	{ DIAG_ ## facility ## _ ## mnemonic, # facility, # mnemonic, message }
+# include "p_messages.h"
+	{ DIAG_NONE, NULL, NULL, NULL }
+};
+
+static const struct shell_diag_struct *shell_diag_locate_(SHELLDIAG diag);
+
+int
+shell_diag(SHELL *shell, SHELLSEVERITY severity, SHELLDIAG code)
+{
+	const struct shell_diag_struct *diag;
+	const char *reasonstr;
+	char severitylevel[] = { '!', '*', 'C', 'E', 'W', 'N', 'I', 'D'};
+	char ch;
+	
+	(void) shell;
+	
+	diag = shell_diag_locate_(code);
+	if(shell && shell->diag_reason)
+	{
+		reasonstr = strerror(shell->diag_reason);
+	}
+	else
+	{
+		reasonstr = NULL;
+	}
+	if((size_t) severity < sizeof(severitylevel))
+	{
+		ch = severitylevel[severity];
+	}
+	else
+	{
+		ch = '?';
+	}
+	if(diag)
+	{
+		fprintf(stderr, "%%%s-%c-%s: ", diag->facility, ch, diag->mnemonic);
+	}
+	else
+	{
+		fprintf(stderr, "%%UNSPEC-%c-%04d: ", ch, code);
+	}
+	if(shell && shell->diag_target)
+	{
+		fprintf(stderr, "%s: ", shell->diag_target);
+	}
+	if(diag && diag->message)
+	{
+		fprintf(stderr, "%s", diag->message);
+	}
+	else
+	{
+		fprintf(stderr, "Unknown diagnostic #%04d", code);
+	}
+	if(shell && shell->diag_reason)
+	{
+		fprintf(stderr, " (reason code #%d", shell->diag_reason);
+		if(reasonstr)
+		{
+			fprintf(stderr, ": %s", reasonstr);
+		}
+		fputc(')', stderr);
+	}
+	if(shell && shell->diag_signal)
+	{
+		fprintf(stderr, " (%s)", strsignal(shell->diag_signal));
+	}
+	if(shell && shell->diag_exitstatus)
+	{
+		fprintf(stderr, " (exited with status %d)", shell->diag_exitstatus);
+	}
+	fputc('\n', stderr);
+	return 0;
+}
+
+static const struct shell_diag_struct *
+shell_diag_locate_(SHELLDIAG code)
+{
+	size_t c;
+	
+	for(c = 0; shell_messages[c].code != DIAG_NONE; c++)
+	{
+		if(shell_messages[c].code == code)
+		{
+			return &shell_messages[c];
+		}
+	}
+	return NULL;
+}

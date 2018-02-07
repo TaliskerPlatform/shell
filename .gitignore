@@ -15,6 +15,7 @@
 .deps
 .libs
 .DS_Store
+.dirstamp
 aclocal.m4
 Makefile
 Makefile.in

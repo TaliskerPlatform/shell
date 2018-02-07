@@ -88,7 +88,7 @@ shell_wrapper_exec(SHELL *shell, int argc, char **argv, char **envp)
 	r = shell_spawn(shell, namebuf, argc, argv, envp);
 	if(r == 127)
 	{
-		fprintf(stderr, "%s: %s: command not found\n", shell->progname, operand);
+		SHELL_CRIT_T(shell, NOTFOUND, shell->progname);
 	}
 	return r;
 }
