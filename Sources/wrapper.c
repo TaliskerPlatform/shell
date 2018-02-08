@@ -97,6 +97,11 @@ shell_wrapper_exec(SHELL *shell, int argc, char **argv, char **envp)
 			return r;
 		}
 	}
+	else
+	{
+		r = 127;
+	}
+#if SHELL_TRY_BUNDLED_PATH
 	/* Next, try argbuf with spaces transformed to dashes, in the $PATH */
 	strcpy(namebuf, argbuf);
 	for(l = 0; namebuf[l]; l++)
@@ -107,6 +112,7 @@ shell_wrapper_exec(SHELL *shell, int argc, char **argv, char **envp)
 		}
 	}
 	r = shell_spawn(shell, namebuf, argc, argv, envp);
+#endif
 	if(r == 127)
 	{
 		SHELL_CRIT_T(shell, NOTFOUND, shell->progname);

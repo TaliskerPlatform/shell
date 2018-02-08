@@ -44,6 +44,11 @@
 # include <sys/wait.h>
 # include <sys/stat.h>
 
+/* Enable this to search for bundled executables in $PATH, not just in
+ * ${pkglibexecdir}
+ */
+/* #define SHELL_TRY_BUNDLED_PATH */
+
 /* The fallback name of the command used to invoke this shell */
 # ifndef SHELLNAME
 #  define SHELLNAME                    "talisker"
