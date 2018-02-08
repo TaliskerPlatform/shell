@@ -37,6 +37,7 @@
 # include <stdarg.h>
 # include <string.h>
 # include <errno.h>
+# include <limits.h>
 
 # include <spawn.h>
 

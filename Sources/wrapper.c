@@ -55,25 +55,49 @@
 int
 shell_wrapper_exec(SHELL *shell, int argc, char **argv, char **envp)
 {
+	const char *basedir = UTILSDIR; 
 	const char *operand;
-	char namebuf[128], argbuf[128];
-	size_t l;
+	char namebuf[_POSIX_PATH_MAX+1], argbuf[_POSIX_PATH_MAX+1];
+	size_t l, basedirlen;
 	int r;
 	
 	if(argc < 2)
 	{
 		return 127;
 	}
+	basedirlen = strlen(basedir);
 	operand = argv[1];
 	l = strlen(shell->progname);
-	if(l + strlen(operand) + 1 >= sizeof(namebuf))
+	if(l + strlen(operand) + 2 >= sizeof(argbuf))
 	{
 		return 127;
 	}
 	strcpy(argbuf, shell->progname);
 	argbuf[l] = ' ';
 	strcpy(&(argbuf[l + 1]), operand);
-
+	argv++;
+	argc--;
+	argv[0] = argbuf;
+	/* First, try UTILSDIR "/" argbuf */
+	if(basedirlen + strlen(argbuf) + 2 < sizeof(namebuf))
+	{
+		strcpy(namebuf, basedir);
+		namebuf[basedirlen] = '/';
+		strcpy(&(namebuf[basedirlen + 1]), argbuf);
+		for(l = 0; namebuf[l]; l++)
+		{
+			if(namebuf[l] == ' ')
+			{
+				namebuf[l] = '-';
+			}
+		}
+		r = shell_spawn(shell, namebuf, argc, argv, envp);
+		if(r != 127)
+		{
+			return r;
+		}
+	}
+	/* Next, try argbuf with spaces transformed to dashes, in the $PATH */
 	strcpy(namebuf, argbuf);
 	for(l = 0; namebuf[l]; l++)
 	{
@@ -82,9 +106,6 @@ shell_wrapper_exec(SHELL *shell, int argc, char **argv, char **envp)
 			namebuf[l] = '-';
 		}
 	}
-	argv++;
-	argc--;
-	argv[0] = argbuf;
 	r = shell_spawn(shell, namebuf, argc, argv, envp);
 	if(r == 127)
 	{

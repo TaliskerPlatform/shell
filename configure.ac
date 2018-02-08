@@ -49,6 +49,33 @@ AC_SUBST([AM_CPPFLAGS])
 AC_SUBST([AM_CFLAGS])
 AC_SUBST([AM_LDFLAGS])
 
+AS_VAR_COPY([save_prefix], [prefix])
+AS_VAR_COPY([save_exec_prefix], [exec_prefix])
+AS_VAR_COPY([save_libexecdir], [libexecdir])
+
+if test x"$prefix" = x"" || test x"$prefix" = x"NONE" ; then
+	prefix=${ac_default_prefix}
+fi
+if test x"$exec_prefix" = x"" || test x"$exec_prefix" = x"NONE" ; then
+	exec_prefix='${prefix}'
+fi
+exec_prefix="`eval echo $exec_prefix`"
+libexecdir="`eval echo $libexecdir`"
+utilsdir="${libexecdir}/${PACKAGE}"
+AC_SUBST([utilsdir])
+AC_DEFINE_UNQUOTED([UTILSDIR], ["`eval echo $utilsdir`"], [Define to the path of bundled utilities])
+echo "utilsdir=`eval echo $utilsdir`"
+
+AS_VAR_COPY([prefix], [save_prefix])
+AS_VAR_COPY([exec_prefix], [save_exec_prefix])
+AS_VAR_COPY([libexecdir], [save_libexecdir])
+
+#############################################################################
+## Project-specific compilation environment tests                          ##
+#############################################################################
+
+AC_CHECK_HEADERS([unistd.h strings.h sys/wait.h sys/stat.h])
+
 #############################################################################
 ## Output files                                                            ##
 #############################################################################
