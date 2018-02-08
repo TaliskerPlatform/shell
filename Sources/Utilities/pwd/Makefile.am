@@ -14,12 +14,6 @@
 ##  See the License for the specific language governing permissions and
 ##  limitations under the License.
 
-SUBDIRS = Wrapper Utilities
+utils_PROGRAMS = talisker-pwd
 
-bin_PROGRAMS = talisker
-
-talisker_SOURCES = p_shell.h p_messages.h \
-	main.c \
-	args.c builtins.c conio.c context.c diagnostics.c glob.c interactive.c \
-	parse.c progname.c prompt.c script.c spawn.c subshell.c usage.c vars.c \
-	wrapper.c
+talisker_pwd_SOURCES = pwd.c

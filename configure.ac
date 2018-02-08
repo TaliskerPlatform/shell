@@ -84,6 +84,8 @@ AC_CONFIG_FILES([
 Makefile
 Sources/Makefile
 Sources/Wrapper/Makefile
+Sources/Utilities/Makefile
+Sources/Utilities/pwd/Makefile
 ])
 
 AC_OUTPUT
