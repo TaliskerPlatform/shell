@@ -79,7 +79,7 @@ shell_wrapper_exec(SHELL *shell, int argc, char **argv, char **envp)
 	argc--;
 	argv[0] = argbuf;
 	/* First, try UTILSDIR "/" argbuf */
-	if(basedirlen + strlen(argbuf) + 2 < sizeof(namebuf))
+	if(basedirlen > 1 && basedirlen + strlen(argbuf) + 2 < sizeof(namebuf))
 	{
 		strcpy(namebuf, basedir);
 		namebuf[basedirlen] = '/';
