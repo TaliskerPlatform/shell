@@ -17,3 +17,5 @@
 utils_PROGRAMS = talisker-pwd
 
 talisker_pwd_SOURCES = pwd.c
+
+talisker_pwd_LDADD = ${top_builddir}/Sources/Portability/libPortability.la

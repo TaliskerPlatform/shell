@@ -22,3 +22,5 @@ wrapper_SOURCES = ../p_shell.h ../p_messages.h \
 	../wrapper.c
 
 wrapper_CPPFLAGS = @AM_CPPFLAGS@ -DSHELL_WRAPPER=1
+
+wrapper_LDADD = ${top_builddir}/Sources/Portability/libPortability.la
