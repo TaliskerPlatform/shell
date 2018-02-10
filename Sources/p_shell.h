@@ -39,10 +39,21 @@
 # include <errno.h>
 # include <limits.h>
 
-# include <spawn.h>
+# ifdef HAVE_UNISTD_H
+#  include <unistd.h>
+# endif
 
-# include <sys/wait.h>
-# include <sys/stat.h>
+# ifdef HAVE_SPAWN_H
+#  include <spawn.h>
+# endif
+
+# ifdef HAVE_SYS_WAIT_H
+#  include <sys/wait.h>
+# endif
+
+# ifdef HAVE_SYS_STAT_H
+#  include <sys/stat.h>
+# endif
 
 /* Enable this to search for bundled executables in $PATH, not just in
  * ${pkglibexecdir}
