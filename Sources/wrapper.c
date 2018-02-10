@@ -115,7 +115,7 @@ shell_wrapper_exec(SHELL *shell, int argc, char **argv, char **envp)
 #endif
 	if(r == 127)
 	{
-		SHELL_CRIT_T(shell, NOTFOUND, shell->progname);
+		SHELL_CRIT_T(shell, NOTFOUND, argbuf);
 	}
 	return r;
 }
