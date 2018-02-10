@@ -88,7 +88,7 @@ shell_spawn(SHELL *shell, const char *name, int argc, char **argv, char **envp)
 			{
 				SHELL_NOTICE_T(shell, CHILDSIG, argv[0]);
 			}
-			return 124;
+			return 128 + WTERMSIG(childstat);
 		}
 		if(WIFEXITED(childstat))
 		{

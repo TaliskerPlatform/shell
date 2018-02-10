@@ -70,5 +70,11 @@ main(int argc, char **argv)
 		return shell_script_exec(&shell, argc, argv, environ);
 #endif
 	}
-	return shell_wrapper_exec(&shell, argc, argv, environ);
+	r = shell_wrapper_exec(&shell, argc, argv, environ);
+	if(r > 128)
+	{
+		/* Child terminated due to a signal */
+		r = 124;
+	}
+	return r;
 }
