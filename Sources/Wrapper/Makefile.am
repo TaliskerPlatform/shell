@@ -17,7 +17,7 @@
 noinst_PROGRAMS = wrapper
 
 wrapper_SOURCES = ../p_shell.h ../p_messages.h \
-	../main.c \
+	main.c \
 	../context.c ../diagnostics.c ../progname.c ../spawn.c ../usage.c \
 	../wrapper.c
 
