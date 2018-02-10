@@ -87,6 +87,7 @@ Sources/Makefile
 Sources/Portability/Makefile
 Sources/Wrapper/Makefile
 Sources/Utilities/Makefile
+Sources/Utilities/help/Makefile
 Sources/Utilities/pwd/Makefile
 ])
 

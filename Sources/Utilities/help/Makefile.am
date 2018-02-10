@@ -14,4 +14,8 @@
 ##  See the License for the specific language governing permissions and
 ##  limitations under the License.
 
-SUBDIRS = help pwd
+utils_PROGRAMS = talisker-help
+
+talisker_help_SOURCES = help.c
+
+talisker_help_LDADD = ${top_builddir}/Sources/Portability/libPortability.la
