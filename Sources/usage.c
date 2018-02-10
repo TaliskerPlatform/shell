@@ -27,5 +27,5 @@ void
 shell_usage(SHELL *shell)
 {
 	SHELL_DIAG_RESET(shell);
-	shell_diag_printf(shell, DIAG_NOTICE, DIAG_SHELL_USAGE, "Usage: %s COMMAND\n", shell->argv[0]);
+	shell_diag_printf(shell, DIAG_NOTICE, DIAG_SHELL_USAGE, "Usage: %s COMMAND\n", shell->progname);
 }
