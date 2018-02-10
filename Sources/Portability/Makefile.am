@@ -14,12 +14,7 @@
 ##  See the License for the specific language governing permissions and
 ##  limitations under the License.
 
-SUBDIRS = Portability . Wrapper Utilities
+noinst_LTLIBRARIES = libPortability.la
 
-bin_PROGRAMS = talisker
-
-talisker_SOURCES = p_shell.h p_messages.h \
-	main.c \
-	args.c builtins.c conio.c context.c diagnostics.c glob.c interactive.c \
-	parse.c progname.c prompt.c script.c spawn.c subshell.c usage.c vars.c \
-	wrapper.c
+libPortability_la_SOURCES = p_portability.h \
+	strrchr.c

@@ -74,7 +74,9 @@ AS_VAR_COPY([libexecdir], [save_libexecdir])
 ## Project-specific compilation environment tests                          ##
 #############################################################################
 
-AC_CHECK_HEADERS([unistd.h strings.h sys/wait.h sys/stat.h])
+AC_CHECK_HEADERS([unistd.h spawn.h strings.h sys/wait.h sys/stat.h])
+
+AC_CHECK_FUNCS([strrchr])
 
 #############################################################################
 ## Output files                                                            ##
@@ -83,6 +85,7 @@ AC_CHECK_HEADERS([unistd.h strings.h sys/wait.h sys/stat.h])
 AC_CONFIG_FILES([
 Makefile
 Sources/Makefile
+Sources/Portability/Makefile
 Sources/Wrapper/Makefile
 Sources/Utilities/Makefile
 Sources/Utilities/pwd/Makefile
