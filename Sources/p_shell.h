@@ -68,6 +68,30 @@
 typedef struct shell_context_struct SHELL;
 typedef struct shell_command_struct SHELLCMD;
 
+typedef enum
+{
+	DIAG_NONE = 0,
+#define DEFDIAG(facility, mnemonic, message) \
+	DIAG_ ## facility ## _ ## mnemonic
+#include "p_messages.h"
+#undef DEFDIAG
+	DIAG_MAX
+} SHELLDIAG;
+
+typedef enum {
+	DIAG_EMERGENCY = 0,
+	DIAG_ALERT = 1,
+	DIAG_CRITICAL = 2,
+	DIAG_CRIT = DIAG_CRITICAL,
+	DIAG_ERROR = 3,
+	DIAG_ERR = DIAG_ERROR,
+	DIAG_WARNING = 4,
+	DIAG_WARN = DIAG_WARNING,
+	DIAG_NOTICE = 5,
+	DIAG_INFO = 6,
+	DIAG_DEBUG = 7
+} SHELLSEVERITY;
+
 struct shell_context_struct
 {
 	int argc;
@@ -103,28 +127,6 @@ struct shell_command_struct
 	char **argv;
 	char **envp;
 };
-
-typedef enum {
-#define DEFDIAG(facility, mnemonic, message) \
-	DIAG_ ## facility ## _ ## mnemonic
-	DIAG_NONE = 0,
-#include "p_messages.h"
-	DIAG_MAX
-} SHELLDIAG;
-
-typedef enum {
-	DIAG_EMERGENCY = 0,
-	DIAG_ALERT = 1,
-	DIAG_CRITICAL = 2,
-	DIAG_CRIT = DIAG_CRITICAL,
-	DIAG_ERROR = 3,
-	DIAG_ERR = DIAG_ERROR,
-	DIAG_WARNING = 4,
-	DIAG_WARN = DIAG_WARNING,
-	DIAG_NOTICE = 5,
-	DIAG_INFO = 6,
-	DIAG_DEBUG = 7
-} SHELLSEVERITY;
 
 # define SHELL_DIAG_RESET(shell) \
 	(shell)->diag_target = NULL; \
@@ -171,6 +173,11 @@ typedef enum {
 # define SHELL_PERR_NOTICE_T(shell, code, target) SHELL_PERR_T(shell, DIAG_NOTICE, code, target)
 # define SHELL_NOTICE(shell, code) SHELL_DIAG(shell, DIAG_NOTICE, code)
 # define SHELL_NOTICE_T(shell, code, target) SHELL_DIAG_T(shell, DIAG_NOTICE, code, target)
+
+# define SHELL_PERR_INFO(shell, code) SHELL_PERR(shell, DIAG_INFO code)
+# define SHELL_PERR_INFO_T(shell, code, target) SHELL_PERR_T(shell, DIAG_INFO, code, target)
+# define SHELL_INFO(shell, code) SHELL_DIAG(shell, DIAG_INFO, code)
+# define SHELL_INFO_T(shell, code, target) SHELL_DIAG_T(shell, DIAG_INFO, code, target)
 
 /* Available in both the normal shell and the wrapper */
 extern char **environ;

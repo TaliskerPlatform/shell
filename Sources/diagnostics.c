@@ -85,6 +85,10 @@ shell_diag_vprintf(SHELL *shell, SHELLSEVERITY severity, SHELLDIAG code, const c
 {
 	const struct shell_diag_struct *diag;
 	
+	if(shell && severity > shell->loglevel)
+	{
+		return;
+	}
 	diag = shell_diag_locate_(code);
 	shell_diag_vprintf_internal_(shell, severity, diag, code, fmt, ap);
 }
@@ -95,6 +99,10 @@ shell_diag_printf(SHELL *shell, SHELLSEVERITY severity, SHELLDIAG code, const ch
 	va_list ap;
 	const struct shell_diag_struct *diag;
 	
+	if(shell && severity > shell->loglevel)
+	{
+		return;
+	}
 	diag = shell_diag_locate_(code);
 	va_start(ap, fmt);
 	shell_diag_vprintf_internal_(shell, severity, diag, code, fmt, ap);
@@ -108,6 +116,10 @@ shell_diag(SHELL *shell, SHELLSEVERITY severity, SHELLDIAG code)
 	const struct shell_diag_struct *diag;
 	const char *reasonstr;
 	
+	if(shell && severity > shell->loglevel)
+	{
+		return;
+	}
 	diag = shell_diag_locate_(code);
 	if(diag && diag->message)
 	{
@@ -143,6 +155,10 @@ shell_diag_printf_internal_(SHELL *shell, SHELLSEVERITY severity, const struct s
 {
 	va_list ap;
 	
+	if(shell && severity > shell->loglevel)
+	{
+		return;
+	}
 	va_start(ap, fmt);
 	shell_diag_vprintf_internal_(shell, severity, diag, code, fmt, ap);
 	va_end(ap);
@@ -154,6 +170,10 @@ shell_diag_vprintf_internal_(SHELL *shell, SHELLSEVERITY severity, const struct 
 	char severitylevel[] = { '!', '*', 'C', 'E', 'W', 'N', 'I', 'D'};
 	char ch;
 		
+	if(shell && severity > shell->loglevel)
+	{
+		return;
+	}
 	diag = shell_diag_locate_(code);
 	if((size_t) severity < sizeof(severitylevel))
 	{

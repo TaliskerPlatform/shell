@@ -95,7 +95,7 @@ shell_spawn(SHELL *shell, const char *name, int argc, char **argv, char **envp)
 			shell->diag_exitstatus = WEXITSTATUS(childstat);
 			if(WEXITSTATUS(childstat))
 			{
-				SHELL_NOTICE_T(shell, CHILDERR, argv[0]);
+				SHELL_INFO_T(shell, CHILDERR, argv[0]);
 			}
 			return WEXITSTATUS(childstat);
 		}

@@ -27,9 +27,12 @@ int
 shell_context_init(SHELL *shell, int argc, char **argv, char **envp)
 {
 	memset(shell, 0, sizeof(SHELL));
+	SHELL_DIAG_RESET(shell);
 	shell->progname = SHELLNAME;
 	shell->argc = argc;
 	shell->argv = argv;
 	shell->envp = envp;
+	shell->loglevel = DIAG_NOTICE;
+	/* From this point on, we may return a failure status */
 	return 0;
 }
