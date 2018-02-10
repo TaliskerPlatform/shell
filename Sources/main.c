@@ -44,31 +44,48 @@ int
 main(int argc, char **argv)
 {
 	SHELL shell;
+	int r;
 	
-	SHELL_DIAG_RESET(&shell);
 	if(shell_context_init(&shell, argc, argv, environ))
 	{
 		SHELL_PERR_CRIT(&shell, INIT);
 		return 125;
 	}
-	shell_progname_parse(&shell, &argc, argv);
-	if(argc < 2)
+	/* We must parse the progname before we do any argument manipulation */
+	shell_progname_parse(&shell);
+	
+	if(shell_args_scan(&shell))
 	{
-#if SHELL_WRAPPER
 		shell_usage(&shell);
 		return 125;
-#else
-		return shell_interactive(&shell);
-#endif
+	}
+	if(shell.subshell_mode)
+	{
+		/* Execute a sub-shell, passing all except the arguments specifying
+		 * the sub-shell we're invoking.
+		 */
+		return shell_subshell_invoke(&shell);
+	}
+	if(shell_args_process(&shell))
+	{
+		shell_usage(&shell);
+		return 125;
+	}
+	if(shell.argc < 1)
+	{
+		/* If stdin is a terminal device, or we've been told not to check,
+		 * enter the interactive interpreter.
+		 */
+		if(isatty(0) || shell.force_tty)
+		{
+			return shell_interactive(&shell);
+		}
+		shell_usage(&shell);
+		return 125;
 	}
 	if(strchr(argv[1], '/'))
 	{
-#if SHELL_WRAPPER
-		shell_usage(&shell);
-		return 125;
-#else
 		return shell_script_exec(&shell, argc, argv, environ);
-#endif
 	}
 	r = shell_wrapper_exec(&shell, argc, argv, environ);
 	if(r > 128)

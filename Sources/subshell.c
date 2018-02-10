@@ -22,3 +22,12 @@
 #endif
 
 #include "p_shell.h"
+
+int
+shell_subshell_invoke(SHELL *shell)
+{
+	(void) shell;
+	
+	fprintf(stderr, "sub-shell execution is not yet supported\n");
+	return 125;
+}

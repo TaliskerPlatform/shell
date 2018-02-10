@@ -195,9 +195,18 @@ void shell_diag_printf(SHELL *shell, SHELLSEVERITY severity, SHELLDIAG code, con
 void shell_diag(SHELL *shell, SHELLSEVERITY severity, SHELLDIAG code);
 
 # ifndef SHELL_WRAPPER
+
 /* Available to the rest of the shell */
+
 int shell_interactive(SHELL *context);
+
 int shell_script_exec(SHELL *context, int argc, char **argv, char **envp);
-# endif
+
+int shell_args_scan(SHELL *context);
+int shell_args_process(SHELL *shell);
+
+int shell_subshell_invoke(SHELL *shell);
+
+# endif /*!SHELL_WRAPPER*/
 
 #endif /*!P_SHELL_H_*/
