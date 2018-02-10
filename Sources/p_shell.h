@@ -74,6 +74,18 @@ struct shell_context_struct
 	char **argv;
 	char **envp;
 	const char *progname;
+	SHELLSEVERITY loglevel;
+	
+#if !SHELL_WRAPPER
+	/* Shell mode */
+	int login_shell;
+	int exec_mode;    /* 0 = unspecified, 1 = exec command, 2 = exec script */
+	const char *exec_command;
+	int interactive;  /* 0 = auto, 1 = force-interactive */
+	int force_tty;    /* 0 = no, 1 = yes */
+	int subshell_mode; /* 0 = unspecified, char = mode */
+	const char *subshell_arg; /* arguments to the sub-shell option */
+#endif /*!SHELL_WRAPPER */
 	
 	/* Diagnostics */
 	const char *diag_target;
@@ -167,7 +179,7 @@ int shell_context_init(SHELL *context, int argc, char **argv, char **envp);
 int shell_context_done(SHELL *context);
 
 void shell_usage(SHELL *context);
-int shell_progname_parse(SHELL *context, int *argc, char **argv);
+int shell_progname_parse(SHELL *context);
 int shell_spawn(SHELL *context, const char *name, int argc, char **argv, char **envp);
 int shell_wrapper_exec(SHELL *context, int argc, char **argv, char **envp);
 

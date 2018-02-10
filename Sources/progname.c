@@ -28,15 +28,22 @@
  */
 
 int
-shell_progname_parse(SHELL *shell, int *argc, char **argv)
+shell_progname_parse(SHELL *shell)
 {
 	char *t, *p;
 	
-	if(*argc < 1)
+	if(shell->argc < 1)
 	{
 		return -1;
 	}
-	shell->progname = argv[0];
+	shell->progname = shell->argv[0];
+	if(shell->progname[0] == '-')
+	{
+#if !SHELL_WRAPPER
+		shell->login_shell = 1;
+#endif
+		shell->progname++;
+	}
 	do
 	{
 		t = strchr(shell->progname, '/');
@@ -54,6 +61,6 @@ shell_progname_parse(SHELL *shell, int *argc, char **argv)
 		}
 	}
 	while(t);
-	argv[0] = (char *) shell->progname;
+	shell->argv[0] = (char *) shell->progname;
 	return 0;
 }
