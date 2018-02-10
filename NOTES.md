@@ -97,9 +97,9 @@ Execute the Talisker shell in a new terminal window. May be combined with -r or 
 
 Execute the Talisker shell on a remote host {via SSH}. The `HOST` may match the name of a _configured remote_, which may specify further configuration for the connection (e.g., using something other than SSH; providing a default `USER` which differs from `$LOGNAME`)
 
-### Container ('-c')
+### Container ('-C')
 
-    talisker -c[IMAGE] -C[CONTAINER-ID] [COMMAND]
+    talisker -C[IMAGE] -P[CONTAINER-ID] [COMMAND]
 
 Execute the Talisker shell in a container {via Docker}, possibly sharing PID space with existing container `CONTAINER-ID`.
 
