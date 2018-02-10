@@ -64,7 +64,6 @@ libexecdir="`eval echo $libexecdir`"
 utilsdir="${libexecdir}/${PACKAGE}"
 AC_SUBST([utilsdir])
 AC_DEFINE_UNQUOTED([UTILSDIR], ["`eval echo $utilsdir`"], [Define to the path of bundled utilities])
-echo "utilsdir=`eval echo $utilsdir`"
 
 AS_VAR_COPY([prefix], [save_prefix])
 AS_VAR_COPY([exec_prefix], [save_exec_prefix])
